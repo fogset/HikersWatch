@@ -12,11 +12,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     LocationManager locationManager;
     LocationListener locationListener;
-
+    TextView latitude, longtitude;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -32,12 +33,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        latitude = findViewById(R.id.latitude);
+        longtitude = findViewById(R.id.longtitude);
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 Log.i("Location", location.toString());
+                latitude.setText("Latitude: " +String.valueOf(location.getLatitude()));
+                longtitude.setText("Longtitude: " +String.valueOf(location.getLongitude()));
             }
 
             @Override
