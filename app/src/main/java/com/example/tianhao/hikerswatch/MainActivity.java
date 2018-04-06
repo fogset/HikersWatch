@@ -3,6 +3,8 @@ package com.example.tianhao.hikerswatch;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,10 +16,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
     LocationManager locationManager;
     LocationListener locationListener;
-    TextView latitude, longtitude,accuracy, altitude, address;
+    TextView latitude, longtitude,accuracy, altitude, addressText;
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -39,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         longtitude = findViewById(R.id.longtitude);
         accuracy = findViewById(R.id.acc);
         altitude = findViewById(R.id.alt);
-        address = findViewById(R.id.add);
+        addressText = findViewById(R.id.add);
 
 
 
@@ -82,5 +88,32 @@ public class MainActivity extends AppCompatActivity {
         longtitude.setText("Longtitude: " +String.valueOf(location.getLongitude()));
         accuracy.setText("Accuracy: " +String.valueOf(location.getAccuracy()));
         altitude.setText("Altitude: " +String.valueOf(location.getAltitude()));
+
+        String address = "Could not find address :(";
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> listAddress = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(),1);
+            if(listAddress != null && listAddress.size() > 0){
+                address = "Address:\n";
+                if(listAddress.get(0).getThoroughfare() != null){
+                    address += listAddress.get(0).getThoroughfare() + "\n";
+                }
+                if(listAddress.get(0).getLocality() != null){
+                    address += listAddress.get(0).getLocality() + " ";
+                }
+                if(listAddress.get(0).getPostalCode() != null){
+                    address += listAddress.get(0).getPostalCode() + " ";
+                }
+                if(listAddress.get(0).getAdminArea() != null){
+                    address += listAddress.get(0).getAdminArea() ;
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        addressText.setText(address);
     }
 }
